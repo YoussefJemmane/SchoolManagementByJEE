@@ -9,10 +9,20 @@ import connection.connection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 @WebServlet(name = "register", value = "/register")
 public class Register extends HttpServlet {
-
+    private String hashPassword(String password) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hashedBytes = md.digest(password.getBytes());
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashedBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String firstName = request.getParameter("firstName");
@@ -37,7 +47,12 @@ public class Register extends HttpServlet {
             response.sendRedirect("auth/register.jsp?error=password");
         }
 
-
+        String hashedPassword = null;
+        try {
+            hashedPassword = hashPassword(password);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServletException("Password hashing failed.", e);
+        }
         try (Connection conn = new connection().getConnection()) {
             PreparedStatement stmtCheck = conn.prepareStatement("SELECT * FROM User WHERE email = ?");
             stmtCheck.setString(1, email);
@@ -49,7 +64,7 @@ public class Register extends HttpServlet {
                 stmtInsert.setString(1, firstName);
                 stmtInsert.setString(2, lastName);
                 stmtInsert.setString(3, email);
-                stmtInsert.setString(4, password);
+                stmtInsert.setString(4, hashedPassword);
                 stmtInsert.setString(5, "student");
                 int rowsInserted = stmtInsert.executeUpdate();
 

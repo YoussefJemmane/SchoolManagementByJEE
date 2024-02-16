@@ -11,11 +11,14 @@
         <div class="py-4 px-6">
             <h2 class="text-lg font-bold mb-4">Menu</h2>
             <ul>
-                <li><a href="#">S’inscrire</a></li>
                 <li><a href="#">Visualiser un cours</a></li>
                 <li><a href="#">Rechercher des cours</a></li>
                 <li><a href="#">Visualiser les notes des cours</a></li>
             </ul>
+            <form action="/logout" method="post">
+                <button type="submit">Logout</button>
+            </form>
+
         </div>
         <div class="py-4 px-6">
             <!-- Display the name of the logged-in user -->
