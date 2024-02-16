@@ -11,13 +11,21 @@
             <label for="email" class="block text-gray-700 font-semibold mb-2">Email:</label>
             <input type="email" id="email" name="email" class="form-input w-full py-3 px-2 border border-dark" placeholder="Enter your email" required>
         </div>
+
+        <c:if test="${param.error == 'emailValidation'}">
+            <div class="text-red-500 mb-4">
+                Email must be a valid email address (i.e. joe.doe@gmail.com)
+            </div>
+        </c:if>
+
         <div class="mb-6">
             <label for="password" class="block text-gray-700 font-semibold mb-2">Password:</label>
             <input type="password" id="password" name="password" class="form-input w-full py-3 px-2 border border-dark" placeholder="Enter your password" required>
         </div>
-        <c:if test="${param.error == 1}">
+
+        <c:if test="${param.error == 'passwordValidation'}">
             <div class="text-red-500 mb-4">
-                Invalid email or password
+                Password must be a valid password (i.e. 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character)
             </div>
         </c:if>
         <div>
