@@ -11,18 +11,10 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import utils.HashPassword;
 @WebServlet(name = "register", value = "/register")
 public class Register extends HttpServlet {
-    private String hashPassword(String password) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hashedBytes = md.digest(password.getBytes());
-        StringBuilder sb = new StringBuilder();
-        for (byte b : hashedBytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
-    }
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String firstName = request.getParameter("firstName");
@@ -33,23 +25,32 @@ public class Register extends HttpServlet {
         // Input validation (add more as needed)
         if (firstName == null || firstName.isEmpty()) {
             response.sendRedirect("auth/register.jsp?error=firstname");
+            return;
         }
         if (lastName == null || lastName.isEmpty()) {
             response.sendRedirect("auth/register.jsp?error=lastname");
+            return;
         }
         if (email == null || email.isEmpty()) {
             response.sendRedirect("auth/register.jsp?error=email");
+            return;
         }
         if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}")) {
             response.sendRedirect("auth/register.jsp?error=emailValidation");
+            return;
         }
         if (password == null || password.isEmpty()) {
             response.sendRedirect("auth/register.jsp?error=password");
+            return;
         }
-
+        if (!password.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")) {
+            System.out.println("Password Validation Failed");
+            response.sendRedirect("auth/register.jsp?error=passwordValidation");
+            return;
+        }
         String hashedPassword = null;
         try {
-            hashedPassword = hashPassword(password);
+            hashedPassword =  HashPassword.hashPassword(password);
         } catch (NoSuchAlgorithmException e) {
             throw new ServletException("Password hashing failed.", e);
         }

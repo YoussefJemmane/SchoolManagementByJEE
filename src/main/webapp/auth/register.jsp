@@ -52,6 +52,11 @@
         Password is Required
       </div>
     </c:if>
+    <c:if test="${param.error == 'passwordValidation'}">
+      <div class="text-red-500 mb-4">
+        Password must be a valid password (i.e. 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character)
+      </div>
+    </c:if>
     <div>
       <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Submit</button>
     </div>
