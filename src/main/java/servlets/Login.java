@@ -1,19 +1,20 @@
 package servlets;
 
-import java.io.*;
-import java.security.MessageDigest;
+import connection.connection;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import utils.HashPassword;
+
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import connection.connection;
-import java.sql.*;
-import connection.connection;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
-import utils.HashPassword;
 @WebServlet(name = "login", value = "/login")
 public class Login extends HttpServlet {
 
@@ -29,7 +30,6 @@ public class Login extends HttpServlet {
             return;
         }
 
-        System.out.println(password);
 
         if (password == null || password.isEmpty() || !password.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")) {
             System.out.println("Password Validation Failed");
@@ -39,14 +39,14 @@ public class Login extends HttpServlet {
 
         String hashedPassword = null;
         try {
-            hashedPassword =  HashPassword.hashPassword(password);
+            hashedPassword =  HashPassword.hashPassword(password+email);
         } catch (NoSuchAlgorithmException e) {
             throw new ServletException("Password hashing failed.", e);
         }
         try {
             connection conn = new connection();
             Connection dbConnection = conn.getConnection();
-            PreparedStatement stmt = dbConnection.prepareStatement("SELECT first_name, last_name FROM User WHERE email = ? AND password = ?");
+            PreparedStatement stmt = dbConnection.prepareStatement("SELECT first_name, last_name, role FROM User WHERE email = ? AND password = ?");
             stmt.setString(1, email);
             stmt.setString(2, hashedPassword);
             ResultSet rs = stmt.executeQuery();
@@ -56,6 +56,7 @@ public class Login extends HttpServlet {
                 lastName = rs.getString("last_name");
                 HttpSession session = request.getSession();
                 session.setAttribute("name", firstName + " " + lastName);
+                session.setAttribute("role", rs.getString("role"));
                 response.sendRedirect(request.getContextPath() + "/menu/index.jsp");
                 System.out.println("Login Successful");
             } else {
