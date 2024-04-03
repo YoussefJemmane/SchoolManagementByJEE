@@ -1,17 +1,20 @@
 package servlets;
 
-import java.io.*;
+import connection.connection;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import utils.HashPassword;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import connection.connection;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import utils.HashPassword;
 @WebServlet(name = "register", value = "/register")
 public class Register extends HttpServlet {
 
@@ -50,7 +53,7 @@ public class Register extends HttpServlet {
         }
         String hashedPassword = null;
         try {
-            hashedPassword =  HashPassword.hashPassword(password);
+            hashedPassword =  HashPassword.hashPassword(password+email);
         } catch (NoSuchAlgorithmException e) {
             throw new ServletException("Password hashing failed.", e);
         }
