@@ -9,7 +9,7 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String role = (String) session.getAttribute("role"); %>
-<t:layout pageTitle="List des Cours">
+<t:layout pageTitle="List des Notes">
     <body>
     <nav class="bg-white border-gray-200 dark:bg-gray-900">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -47,14 +47,14 @@
         <div class="flex flex-col mt-8">
             <div class="flex justify-start">
 
-                    <input id="searchInput" type="text" name="search" placeholder="Rechercher par nom de cours" class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none">
+                <c:if test="${role != 'student'}">
 
-
+                </c:if>
             </div>
             <c:if test="${role != 'student'}">
-            <div class="flex justify-end">
-                <a href="/cours/create.jsp" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3">Ajouter un cours</a>
-            </div>
+                <div class="flex justify-end">
+                    <a href="/addNote" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3">Ajouter un Note</a>
+                </div>
             </c:if>
 
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -65,73 +65,66 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Nom
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Description
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Date de debut
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Date de fin
-                                </th>
                                 <c:if test="${role != 'student'}">
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
+                                    Nom d'etudiant
                                 </th>
+                                </c:if>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Nom de cours
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Note 1
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Note 2
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Note 3
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Note 4
+                                </th>
+                                <c:if test="${role != 'student'}">
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions
+                                    </th>
                                 </c:if>
                             </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" id="searchResults">
-                            <c:if test="${empty cours}">
+                            <c:forEach var="note" items="${notes}">
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">
-                                            Aucun cours trouvé
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:if>
-
-
-                            <c:forEach items="${cours}" var="cours" >
-                                <tr>
+                                    <c:if test="${role != 'student'}">
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items
-                                        -center">
-                                            <div class="flex-shrink-0 h-10 w-10">
-
-                                                <c:out value="${cours.id}"/>
-                                            </div>
+                                        <div class="flex items-center">
                                             <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    <c:out value="${cours.nom}"/>
-                                                </div>
+                                                <div class="text-sm font-medium text-gray-900">${note.username}</div>
                                             </div>
                                         </div>
+
+                                    </td>
+                                    </c:if>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">${note.cours_name}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">
-                                            <c:out value="${cours.description}"/>
-                                        </div>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">${note.note1}</span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            <c:out value="${cours.dateDebut}"/>
-                                        </span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">${note.note2}</span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <c:out value="${cours.dateFin}"/>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">${note.note3}</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">${note.note4}</span>
                                     </td>
                                     <c:if test="${role != 'student'}">
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a href="/CoursEdit?id=<c:out value="${cours.id}"/>"
-                                           class="text-indigo-600 hover:text-indigo-900">Modifier</a>
-                                        <a href="/CoursDelete?id=<c:out value="${cours.id}"/>"
-                                           class="text-red-600 hover:text-red-900">Supprimer</a>
-                                    </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <a href="/editNote?id=${note.id}" class="text-indigo-600 hover:text-indigo-900">Modifier</a>
+                                            <a href="/deleteNote?id=${note.id}" class="text-red-600 hover:text-red-900">Supprimer</a>
+                                        </td>
                                     </c:if>
                                 </tr>
                             </c:forEach>
@@ -144,30 +137,30 @@
         </div>
     </div>
     </body>
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
+<%--    <script>--%>
+<%--        const searchInput = document.getElementById('searchInput');--%>
+<%--        const searchResults = document.getElementById('searchResults');--%>
 
-        searchInput.addEventListener('input', function (e) {
-            const searchValue = e.target.value;
-            fetch('/CoursSearch?searchTerm=' + searchValue)
-                .then(response => response.json())
-                .then(data => {
-                    let newHtml = ''
-                    data.forEach(function(cours) {
-                        newHtml += '<tr>';
-                        newHtml += '<td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><div class="flex-shrink-0 h-10 w-10">' + cours.id + '</div><div class="ml-4"><div class="text-sm font-medium text-gray-900">' + cours.nom + '</div></div></div></td>';
-                        newHtml += '<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">' + cours.description + '</div></td>';
-                        newHtml += '<td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">' + cours.dateDebut + '</span></td>';
-                        newHtml += '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + cours.dateFin + '</td>';
-                        newHtml += '<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></td>';
-                        newHtml += '</tr>';
-                    });
-                    searchResults.innerHTML = newHtml;
-                });
-        });
+<%--        searchInput.addEventListener('input', function (e) {--%>
+<%--            const searchValue = e.target.value;--%>
+<%--            fetch('/CoursSearch?searchTerm=' + searchValue)--%>
+<%--                .then(response => response.json())--%>
+<%--                .then(data => {--%>
+<%--                    let newHtml = ''--%>
+<%--                    data.forEach(function(cours) {--%>
+<%--                        newHtml += '<tr>';--%>
+<%--                        newHtml += '<td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><div class="flex-shrink-0 h-10 w-10">' + cours.id + '</div><div class="ml-4"><div class="text-sm font-medium text-gray-900">' + cours.nom + '</div></div></div></td>';--%>
+<%--                        newHtml += '<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">' + cours.description + '</div></td>';--%>
+<%--                        newHtml += '<td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">' + cours.dateDebut + '</span></td>';--%>
+<%--                        newHtml += '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + cours.dateFin + '</td>';--%>
+<%--                        newHtml += '<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></td>';--%>
+<%--                        newHtml += '</tr>';--%>
+<%--                    });--%>
+<%--                    searchResults.innerHTML = newHtml;--%>
+<%--                });--%>
+<%--        });--%>
 
 
-    </script>
+<%--    </script>--%>
 </t:layout>
 

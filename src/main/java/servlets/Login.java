@@ -46,7 +46,7 @@ public class Login extends HttpServlet {
         try {
             connection conn = new connection();
             Connection dbConnection = conn.getConnection();
-            PreparedStatement stmt = dbConnection.prepareStatement("SELECT first_name, last_name, role FROM User WHERE email = ? AND password = ?");
+            PreparedStatement stmt = dbConnection.prepareStatement("SELECT id,first_name, last_name, role FROM User WHERE email = ? AND password = ?");
             stmt.setString(1, email);
             stmt.setString(2, hashedPassword);
             ResultSet rs = stmt.executeQuery();
@@ -55,6 +55,7 @@ public class Login extends HttpServlet {
                 firstName = rs.getString("first_name");
                 lastName = rs.getString("last_name");
                 HttpSession session = request.getSession();
+                session.setAttribute("id", rs.getInt("id"));
                 session.setAttribute("name", firstName + " " + lastName);
                 session.setAttribute("role", rs.getString("role"));
                 response.sendRedirect(request.getContextPath() + "/menu/index.jsp");
